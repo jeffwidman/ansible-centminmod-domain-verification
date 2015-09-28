@@ -1,0 +1,14 @@
+---
+# tasks file for centminmod_domain_verification
+
+- name: Verify Centminmod created a nginx conf file for domain
+  stat: path=/usr/local/nginx/conf/conf.d/{{ domain }}.conf
+  register: nginx_conf_file
+
+- name: Verify Centminmod created a public web root directory for domain
+  stat: path=/home/nginx/domains/{{ domain }}/public
+  register: nginx_web_root_folder
+
+- name: Abort the play if Centminmod didn't create these
+  fail: msg="Looks like you need to create the domain vhost files using Centminmod shell script menu"
+  when: nginx_conf_file.stat.exists != True or nginx_web_root_folder.stat.exists != True
